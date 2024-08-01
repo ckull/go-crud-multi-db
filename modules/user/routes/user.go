@@ -2,8 +2,8 @@ package routes
 
 import (
 	"go-crud/modules/user/handler"
-	"go-crud/modules/user/repository/mongodb"
-	"go-crud/modules/user/useCase/mongodb"
+	repo "go-crud/modules/user/repository/mongodb"
+	useCase "go-crud/modules/user/useCase/mongodb"
 	"go-crud/server"
 	"log"
 )
@@ -17,8 +17,8 @@ func UserRoute(s *server.Server) {
 
 	switch dbType {
 	case "mongodb":
-		userRepo = mongodb.NewUserRepository(db)
-		userUsecase = mongodb.NewUserUsecase(userRepo)
+		userRepo = repo.NewUserRepository(db)
+		userUsecase = useCase.NewUserUsecase(userRepo)
 	case "postgres":
 		// userRepo = postgres.NewUserRepository(db)
 	default:
