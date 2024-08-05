@@ -26,7 +26,12 @@ func UserRoute(s *types.Server) {
 		userRepo = repo.NewUserRepository(mongoClient)
 		userUsecase = useCase.NewUserUsecase(userRepo)
 	case "postgres":
-		// userRepo = postgres.NewUserRepository(db)
+		postgresClient, ok := dbConn.(*postgres.Client)
+		if !ok {
+			log.Fatal("Failed to assert database connection as *mongo.Client")
+		}
+		userRepo = repo.NewUserRepository(postgresClient)
+		userUsecase = userRepo.NewUserUsecase(userRepo)
 	default:
 		log.Fatalf("Unsupported database type: %s", dbType)
 	}
