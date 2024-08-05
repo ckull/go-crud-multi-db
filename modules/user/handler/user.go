@@ -3,6 +3,8 @@ package handler
 import (
 	models "go-crud/modules/user/model/mongodb"
 	"go-crud/modules/user/useCase/mongodb"
+	useCaseType "go-crud/modules/user/useCase/types"
+	"go/types"
 
 	"net/http"
 
@@ -19,7 +21,7 @@ type (
 	}
 
 	userHandler struct {
-		userUsecase mongodb.UserUsecase
+		userUsecase useCaseType.UserUsecase
 	}
 )
 
