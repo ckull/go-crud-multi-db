@@ -3,7 +3,8 @@ package factory
 import (
 	"context"
 	"go-crud/config"
-	"go-crud/pkg/database"
+	mongoDB "go-crud/pkg/database/mongodb"
+	postgresDB "go-crud/pkg/database/postgres"
 	"log"
 
 	"go.mongodb.org/mongo-driver/mongo"
@@ -49,7 +50,7 @@ func NewDatabase(ctx context.Context, cfg *config.Config) Database {
 	switch cfg.DBType {
 	case "mongodb":
 		{
-			client := database.MongoConn(ctx, cfg)
+			client := mongoDB.MongoConn(ctx, cfg)
 
 			return &MongoDB{
 				Client: client,
@@ -58,7 +59,7 @@ func NewDatabase(ctx context.Context, cfg *config.Config) Database {
 
 	case "postgres":
 		{
-			db := database.PostgresConn(ctx, cfg)
+			db := postgresDB.PostgresConn(ctx, cfg)
 
 			return &PostgresDB{
 				DB: db,

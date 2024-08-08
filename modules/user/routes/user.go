@@ -1,34 +1,58 @@
 package routes
 
 import (
-	"go-crud/modules/user/handler"
-	"go-crud/modules/user/repository/mongodb"
-	"go-crud/modules/user/useCase/mongodb"
-	"go-crud/server"
+	mongoHandler "go-crud/modules/user/handler/mongodb"
+	postgresHandler "go-crud/modules/user/handler/postgres"
+	mongoRepo "go-crud/modules/user/repository/mongodb"
+	postgresRepo "go-crud/modules/user/repository/postgres"
+	mongoUseCase "go-crud/modules/user/useCase/mongodb"
+	postgresUseCase "go-crud/modules/user/useCase/postgres"
+	"go-crud/server/types"
 	"log"
+
+	"go.mongodb.org/mongo-driver/mongo"
+	"gorm.io/gorm"
 )
 
-func UserRoute(s *server.Server) {
-	db := s.db.GetConnection()
-	dbType := s.cfg.DBType
+func UserRoute(s *types.Server) {
+	dbConn := (*s.Db).GetConnection()
 
-	var userRepo any
-	var userUsecase any
+	dbType := s.Cfg.DBType
+
+	var userRepo interface{}
+	var userUsecase interface{}
+	var userHandler interface{}
 
 	switch dbType {
 	case "mongodb":
-		userRepo = mongodb.NewUserRepository(db)
-		userUsecase = mongodb.NewUserUsecase(userRepo)
+		mongoClient, ok := dbConn.(*mongo.Client)
+		if !ok {
+			log.Fatal("Failed to assert database connection as *mongo.Client")
+		}
+		userRepo = mongoRepo.NewUserRepository(mongoClient)
+		userUsecase = mongoUseCase.NewUserUsecase(userRepo.(mongoRepo.UserRepository))
+		userHandler = mongoHandler.NewUserHandler(userUsecase.(mongoUseCase.UserUsecase))
+
+		s.App.GET("/users", userHandler.(mongoHandler.UserHandler).GetUsers)
+		s.App.POST("/users", userHandler.(mongoHandler.UserHandler).CreateUser)
+		s.App.PUT("/users", userHandler.(mongoHandler.UserHandler).UpdateUser)
+		s.App.DELETE("/users", userHandler.(mongoHandler.UserHandler).DeleteUser)
 	case "postgres":
-		// userRepo = postgres.NewUserRepository(db)
+		postgresClient, ok := dbConn.(*gorm.DB)
+		if !ok {
+			log.Fatal("Failed to assert database connection as *mongo.Client")
+		}
+		userRepo = postgresRepo.NewUserRepository(postgresClient)
+		userUsecase = postgresUseCase.NewUserUsecase(userRepo.(postgresRepo.UserRepository))
+		userHandler = postgresHandler.NewUserHandler(userUsecase.(postgresUseCase.UserUsecase))
+
+		s.App.GET("/users", userHandler.(postgresHandler.UserHandler).GetUsers)
+		s.App.POST("/users", userHandler.(postgresHandler.UserHandler).CreateUser)
+		s.App.PUT("/users", userHandler.(postgresHandler.UserHandler).UpdateUser)
+		s.App.DELETE("/users", userHandler.(postgresHandler.UserHandler).DeleteUser)
+
 	default:
 		log.Fatalf("Unsupported database type: %s", dbType)
 	}
-
-	userHandler := handler.NewUserHandler(userUsecase)
-	s.app.GET("/users", userHandler.GetUsers)
-	s.app.POST("/users", userHandler.CreateUser)
-	s.app.PUT("/users", userHandler.UpdateUser)
-	s.app.DELETE("/users", userHandler.DeleteUser)
 
 }

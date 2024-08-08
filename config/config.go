@@ -48,7 +48,7 @@ func LoadConfig(path string) *Config {
 		},
 		Db: &Db{
 			MongoDBURI:  os.Getenv("DB_MONGODB_URI"),
-			PostgresDSN: os.Getenv("DB_PostgresDSN"),
+			PostgresDSN: os.Getenv("DB_POSTGRESDSN"),
 		},
 	}
 }
