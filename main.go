@@ -9,6 +9,11 @@ import (
 	"os"
 )
 
+// @title Swagger Example API
+// @version 1.0
+// @description This is a sample server for using Swagger with Echo.
+// @host localhost:8080
+// @BasePath /api/v1
 func main() {
 
 	ctx := context.Background()

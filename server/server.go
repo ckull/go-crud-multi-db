@@ -10,6 +10,10 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+
+	echoSwagger "github.com/swaggo/echo-swagger"
+
+	_ "go-crud/docs"
 )
 
 func Start(ctx context.Context, cfg *config.Config, db *factory.Database) {
@@ -27,4 +31,7 @@ func Start(ctx context.Context, cfg *config.Config, db *factory.Database) {
 	}))
 
 	routes.UserRoute(s)
+
+	s.App.GET("/swagger/*", echoSwagger.WrapHandler)
+	s.App.Logger.Fatal(s.App.Start(":8080"))
 }

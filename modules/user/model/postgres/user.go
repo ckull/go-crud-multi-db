@@ -2,14 +2,12 @@ package postgres
 
 import (
 	"time"
-
-	"gorm.io/gorm"
 )
 
 type User struct {
-	ID        string `gorm:"primaryKey"`
-	Name      string
-	Email     string
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	ID        string         `gorm:"type:uuid;default:uuid_generate_v4();primaryKey"`
+	Name      string         `gorm:"type:varchar(100);not null"`
+	Email     string         `gorm:"type:varchar(100);uniqueIndex;not null"`
+	CreatedAt time.Time      `gorm:"autoCreateTime"`
+	UpdatedAt time.Time      `gorm:"autoUpdateTime"`
 }

@@ -1,10 +1,8 @@
-package handler
+package mongodb
 
 import (
 	models "go-crud/modules/user/model/mongodb"
 	"go-crud/modules/user/useCase/mongodb"
-	useCaseType "go-crud/modules/user/useCase/types"
-	"go/types"
 
 	"net/http"
 
@@ -21,7 +19,7 @@ type (
 	}
 
 	userHandler struct {
-		userUsecase useCaseType.UserUsecase
+		userUsecase mongodb.UserUsecase
 	}
 )
 
@@ -31,6 +29,13 @@ func NewUserHandler(userUsecase mongodb.UserUsecase) UserHandler {
 	}
 }
 
+// @Summary GetUsers
+// @Description get users
+// @ID get-string-by-int
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} models.User
+// @Router /users/ [get]
 func (uh *userHandler) GetUsers(c echo.Context) error {
 	users, err := uh.userUsecase.GetUsers()
 	if err != nil {

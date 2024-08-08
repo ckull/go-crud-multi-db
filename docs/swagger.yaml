@@ -1,0 +1,37 @@
+basePath: /api/v1
+definitions:
+  mongodb.User:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      updated_at:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: This is a sample server for using Swagger with Echo.
+  title: Swagger Example API
+  version: "1.0"
+paths:
+  /users/:
+    get:
+      consumes:
+      - application/json
+      description: get users
+      operationId: get-string-by-int
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/mongodb.User'
+      summary: GetUsers
+swagger: "2.0"

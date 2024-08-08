@@ -2,17 +2,23 @@ package postgres
 
 import (
 	models "go-crud/modules/user/model/postgres"
-	"go-crud/modules/user/repository/postgres"
-	"go-crud/modules/user/useCase/types"
+	postgresRepo "go-crud/modules/user/repository/postgres"
 )
 
 type (
+	UserUsecase interface {
+		GetUsers() ([]models.User, error)
+		CreateUser(user models.User) error
+		UpdateUser(id string, update models.User) error
+		DeleteUser(id string) error
+	}
+
 	userUsecase struct {
-		userRepository postgres.UserRepository
+		userRepository postgresRepo.UserRepository
 	}
 )
 
-func NewUserUsecase(userRepository postgres.UserRepository) types.UserUsecase {
+func NewUserUsecase(userRepository postgresRepo.UserRepository) UserUsecase {
 	return &userUsecase{
 		userRepository: userRepository,
 	}

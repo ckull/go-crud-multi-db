@@ -3,8 +3,6 @@ package factory
 import (
 	"context"
 	"go-crud/config"
-	"go-crud/modules/user/model/mongodb"
-	"go-crud/modules/user/model/postgres"
 	"go-crud/pkg/database"
 	"log"
 
@@ -16,17 +14,14 @@ type (
 	Database interface {
 		GetConnection() interface{}
 		Disconnect() interface{}
-		GetModel(modelType string) interface{}
 	}
 
 	MongoDB struct {
 		Client *mongo.Client
-		Models map[string]interface{}
 	}
 
 	PostgresDB struct {
-		DB     *gorm.DB
-		Models map[string]interface{}
+		DB *gorm.DB
 	}
 )
 
@@ -36,14 +31,6 @@ func (db *MongoDB) GetConnection() interface{} {
 
 func (db *PostgresDB) GetConnection() interface{} {
 	return db.DB
-}
-
-func (db *MongoDB) GetModel(modelType string) interface{} {
-	return db.Models[modelType]
-}
-
-func (db *PostgresDB) GetModel(modelType string) interface{} {
-	return db.Models[modelType]
 }
 
 func (db *MongoDB) Disconnect() interface{} {
@@ -66,10 +53,6 @@ func NewDatabase(ctx context.Context, cfg *config.Config) Database {
 
 			return &MongoDB{
 				Client: client,
-				Models: map[string]interface{}{
-					"user": &mongodb.User{},
-					// Add other MongoDB Models here
-				},
 			}
 		}
 
@@ -79,10 +62,6 @@ func NewDatabase(ctx context.Context, cfg *config.Config) Database {
 
 			return &PostgresDB{
 				DB: db,
-				Models: map[string]interface{}{
-					"user": &postgres.User{},
-					// Add other MongoDB Models here
-				},
 			}
 		}
 
